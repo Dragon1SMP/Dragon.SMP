@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon SMP | Efsanevi Yönetim Paneli v3.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- TASARIMIN TEMELİ (DARK & DRAGON) --- */
+        :root {
+            --primary: #ff4500;
+            --primary-dark: #b33227;
+            --bg-dark: #0a0a0a;
+            --card-bg: #161616;
+            --text-light: #ffffff;
+            --border-color: #333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); min-height: 100vh; overflow-x: hidden; }
+
+        /* --- GİRİŞ VE KAYIT SİSTEMİ (MAKSİMUM ÖZEN) --- */
+        .auth-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: 50px;
+            border: 8px solid var(--primary);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(255, 69, 0, 0.4);
+            animation: dragonPulse 2s infinite alternate;
+        }
+
+        @keyframes dragonPulse {
+            from { box-shadow: 0 0 50px rgba(255, 69, 0, 0.2); }
+            to { box-shadow: 0 0 100px rgba(255, 69, 0, 0.5); }
+        }
+
+        h1 { 
+            font-family: 'Syncopate', sans-serif; 
+            font-size: 3.5rem; 
+            color: var(--primary); 
+            margin-bottom: 40px; 
+            letter-spacing: -3px;
+            text-shadow: 5px 5px 0px rgba(0,0,0,0.5);
+        }
+
+        input {
+            width: 100%;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 20px;
+            border: 4px solid var(--border-color);
+            background: #222;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            outline: none;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        input:focus { border-color: var(--primary); background: #2a2a2a; transform: scale(1.02); }
+
+        .btn {
+            width: 100%;
+            padding: 26px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 22px;
+            font-size: 1.6rem;
+            font-weight: 900;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-bottom: 8px solid var(--primary-dark);
+            transition: 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn:active { transform: translateY(6px); border-bottom-width: 2px; }
+        .btn:hover { filter: brightness(1.1); }
+
+        .link-text { color: #888; cursor: pointer; font-weight: 800; text-decoration: none; margin-top: 25px; display: inline-block; }
+        .link-text:hover { color: var(--primary); }
+
+        /* --- ÜST BAR (NAVIGASYON) --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 110px;
+            background: rgba(0,0,0,0.95);
+            border-bottom: 6px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 60px;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-logo { font-family: 'Syncopate', sans-serif; font-size: 2rem; color: var(--primary); font-weight: 900; }
+        .nav-stats { display: flex; align-items: center; gap: 30px; }
+        .dp-counter { background: var(--primary); padding: 12px 30px; border-radius: 40px; font-weight: 900; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3); }
+        .menu-toggle { font-size: 2.5rem; cursor: pointer; color: white; transition: 0.3s; }
+        .menu-toggle:hover { color: var(--primary); transform: rotate(90deg); }
+
+        /* --- SIDEBAR (YAN MENÜ) --- */
+        .sidebar {
+            position: fixed;
+            top: 110px;
+            right: -450px;
+            width: 400px;
+            height: calc(100vh - 110px);
+            background: #0d0d0d;
+            border-left: 6px solid var(--primary);
+            transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1900;
+            padding: 50px;
+        }
+
+        .sidebar.active { right: 0; }
+        .sidebar-item {
+            padding: 25px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border-bottom: 2px solid #222;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sidebar-item:hover { color: var(--primary); background: #1a1a1a; padding-left: 40px; }
+
+        /* --- PANEL İÇERİĞİ --- */
+        .content-area { display: none; padding: 160px 50px 100px; max-width: 1400px; margin: 0 auto; }
+        .active-view { display: block !important; animation: fadeIn 0.8s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .big-card {
+            background: white;
+            color: #111;
+            border-radius: 60px;
+            padding: 80px;
+            text-align: center;
+            border: 10px solid #000;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+            margin-bottom: 50px;
+        }
+
+        .big-card h2 { font-size: 4.5rem; font-weight: 950; letter-spacing: -3px; margin-bottom: 20px; }
+        .ip-box { font-size: 2.5rem; font-weight: 900; color: var(--primary); margin: 30px 0; background: #f0f0f0; padding: 20px; border-radius: 30px; display: inline-block; }
+
+        /* --- AYARLAR (HESAP YÖNETİMİ) --- */
+        .settings-grid { display: grid; gap: 30px; }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 40px 60px;
+            border-radius: 40px;
+            border: 4px solid #eee;
+        }
+
+        .setting-info h4 { font-size: 1.2rem; color: #888; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
+        .setting-info p { font-size: 2.8rem; font-weight: 900; color: #000; }
+
+        /* --- POPUP (MODAL) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-body {
+            background: white;
+            color: #111;
+            width: 100%;
+            max-width: 800px;
+            padding: 60px;
+            border-radius: 60px;
+            border: 12px solid var(--primary);
+            text-align: center;
+            position: relative;
+        }
+
+        .rules-container {
+            text-align: left;
+            max-height: 450px;
+            overflow-y: auto;
+            background: #f4f4f4;
+            padding: 30px;
+            border-radius: 30px;
+            font-weight: 800;
+            line-height: 1.6;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-section" class="auth-wrapper">
+        <div class="auth-card">
+            <h1>DRAGON SMP</h1>
+            
+            <div id="login-box">
+                <input type="text" id="l-user" placeholder="Kullanıcı Adı">
+                <input type="password" id="l-pass" placeholder="Şifre">
+                <button onclick="handleLogin()" class="btn">PANELİ AÇ</button>
+                <p><span class="link-text" onclick="switchAuth('forgot')">Şifremi Unuttum</span></p>
+                <hr style="margin:30px 0; border:2px solid #333;">
+                <p>Ekibe katıl: <span class="link-text" style="color:var(--primary)" onclick="switchAuth('reg')">KAYIT OL</span></p>
+            </div>
+
+            <div id="reg-box" class="hidden">
+                <input type="text" id="r-user" placeholder="Kullanıcı Adı Seç">
+                <input type="email" id="r-mail" placeholder="Gmail Adresin">
+                <input type="password" id="r-pass" placeholder="Güçlü Bir Şifre">
+                <button onclick="startVerification('reg')" class="btn">KOD GÖNDER VE KAYDOL</button>
+                <p><span class="link-text" onclick="switchAuth('login')">← Giriş Ekranına Dön</span></p>
+            </div>
+
+            <div id="forgot-box" class="hidden">
+                <h3 style="margin-bottom:20px;">HESAP KURTARMA</h3>
+                <input type="text" id="f-user" placeholder="Kullanıcı Adınız">
+                <input type="email" id="f-mail" placeholder="Kayıtlı E-postanız">
+                <button onclick="startVerification('forgot')" class="btn">BİLGİLERİ DOĞRULA</button>
+                <p><span class="link-text" onclick="switchAuth('login')">← Vazgeç</span></p>
+            </div>
+
+            <div id="verify-box" class="hidden">
+                <h2 style="color:var(--primary); margin-bottom:20px;">GÜVENLİK ONAYI</h2>
+                <p style="margin-bottom:20px; font-weight:800;">Mailine gelen 6 haneli kodu gir:</p>
+                <input type="text" id="v-input" placeholder="000000" maxlength="6" style="text-align:center; font-size:3rem; letter-spacing:10px;">
+                <button id="v-submit-btn" class="btn">KODU ONAYLA</button>
+            </div>
+
+            <p id="auth-msg" style="margin-top:25px; font-weight:900; font-size:1.2rem; color:var(--primary);"></p>
+        </div>
+    </div>
+
+    <nav id="main-nav" class="navbar hidden">
+        <div class="nav-logo">DRAGON SMP</div>
+        <div class="nav-stats">
+            <div class="dp-tag dp-counter">🐉 <span id="stat-dp">0</span> DP</div>
+            <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+        </div>
+    </nav>
+
+    <div id="sidebar" class="sidebar">
+        <div style="padding-bottom:30px; border-bottom:4px solid var(--primary); margin-bottom:30px;">
+            <p style="color:#666; font-weight:900; letter-spacing:4px;">YÖNETİCİ</p>
+            <p id="side-username" style="font-size:2.5rem; font-weight:950; color:var(--primary);">MURAT</p>
+        </div>
+        <div class="sidebar-item" onclick="navTo('home-view')">🏠 ANA PANEL</div>
+        <div class="sidebar-item" onclick="navTo('settings-view')">⚙️ HESAP AYARLARI</div>
+        <div class="sidebar-item" onclick="alert('Market sistemi yakında aktif!')">🛒 DP MAĞAZASI</div>
+        <div class="sidebar-item" onclick="showModal('rules-modal')">📜 SUNUCU KURALLARI</div>
+        <div class="sidebar-item" onclick="showModal('support-modal')">📞 DESTEK HATTI</div>
+        <div class="sidebar-item" style="color:#ff4444; margin-top:auto;" onclick="location.reload()">🚪 GÜVENLİ ÇIKIŞ</div>
+    </div>
+
+    <div id="home-view" class="content-area">
+        <div class="big-card">
+            <h2>SELAM, <span id="welcome-name">MURAT</span>!</h2>
+            <p style="font-size:1.8rem; font-weight:800; color:#555;">Dragon SMP dünyasına hoş geldin.</p>
+            <div class="ip-box">play.dragonsmp.com</div><br>
+            <button class="btn" style="width:auto; padding:20px 60px;" onclick="copyIP()">IP ADRESİNİ KOPYALA</button>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px;">
+            <div class="big-card" style="padding:50px; cursor:pointer;" onclick="showModal('rules-modal')">
+                <span style="font-size:5rem;">📜</span>
+                <h3 style="margin-top:20px; font-size:2rem;">KURALLAR</h3>
+            </div>
+            <div class="big-card" style="padding:50px; cursor:pointer;" onclick="showModal('support-modal')">
+                <span style="font-size:5rem;">📞</span>
+                <h3 style="margin-top:20px; font-size:2rem;">DESTEK</h3>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-view" class="content-area">
+        <div class="big-card">
+            <h2 style="margin-bottom:50px;">HESAP YÖNETİMİ</h2>
+            <div class="settings-grid">
+                <div class="setting-row">
+                    <div class="setting-info"><h4>KULLANICI ADI</h4><p id="s-user">murat</p></div>
+                    <button class="btn" style="width:auto; margin:0; padding:15px 40px;" onclick="initEdit('username')">DEĞİŞTİR</button>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info"><h4>E-POSTA ADRESİ</h4><p id="s-mail">murat@gmail.com</p></div>
+                    <button class="btn" style="width:auto; margin:0; padding:15px 40px;" onclick="initEdit('email')">GÜNCELLE</button>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info"><h4>GÜVENLİ ŞİFRE</h4><p>••••••••••••</p></div>
+                    <button class="btn" style="width:auto; margin:0; padding:15px 40px;" onclick="initEdit('password')">YENİLE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+        <div id="rules-modal" class="modal-body hidden">
+            <h2 style="color:var(--primary); font-size:3rem;">SUNUCU KURALLARI</h2>
+            <div class="rules-container">
+                • KESİNLİKLE ARGO VE KÜFÜR YASAKTIR ATANLAR İLK UYARIDAN SONRA MUTELENİR.<br>
+                • DOLANDIRICILIK YASAKTIR.<br>
+                • YAŞI KÜÇÜK OLANLARI ZORBALAMAK YASAKTIR.<br>
+                • SUNUCUDA BUG BULUNURSA DİREK TİCKET AÇIP SÖYLENMELİDİR.<br>
+                • REHBERLİK İÇİN DISCORDDAN TİCKET AÇIN.<br>
+                • SPAM KESİNLİKLE YASAKTIR.<br>
+                • OYUNCULARI RAHATSIZ ETMEK YASAKTIR.<br>
+                • REKLAM YASAKTIR.<br>
+                • DİN, IRK AYRIMI YAPILMAZ ADİLCE OYNANIR.<br>
+                • YETKİLİLER BOŞUNA RAHATSIZ EDİLMEMELİDİR.<br>
+                • @ÖRNEK YETKİLİ BOŞ YERE ETİKETLENMEZ.<br>
+                • İFTİRA YASAKTIR.<br>
+                • TRAP SERBESTTİR.<br>
+                • SOHBET DÜZENİNİ BOZMAK YASAKTIR.<br>
+                • GERÇEK PARA İLE TİCARET OYUNCULARIN ARASINDADIR SUNUCU SORUMLU DEĞİLDİR.<br>
+                • ÖZELDE KONUŞULAN MESAJLAR SUNUCU İLE ALAKALI DEĞİLDİR.<br>
+                • YETKİLİYE DOLANDIRMAYA/KÖTÜYE ÇIKARTMAYA ÇALIŞMA 30DK MUTE.<br>
+                • YETKİLİYE DMDEN HAKARET/RAHATSIZLIK YASAKTIR.<br>
+                • KURALLARDA AÇIK BULUNURSA YAPILAMAZ.<br><br>
+                <span style="color:var(--primary)">EJDERHANIN ÖFKESİNDEN SAKININ, KURALLARA UYUN!</span>
+            </div>
+            <button class="btn" onclick="document.getElementById('modal-overlay').style.display='none'">OKUDUM, ONAYLIYORUM</button>
+        </div>
+
+        <div id="support-modal" class="modal-body hidden">
+            <h2 style="color:var(--primary); font-size:3rem;">DESTEK MERKEZİ</h2>
+            <div style="margin:40px 0;">
+                <a href="https://discord.gg/Gv37F92p" target="_blank" class="btn" style="background:#5865F2; border-color:#4752c4; text-decoration:none; display:block;">DİSCORD SUNUCUMUZ</a>
+                <a href="https://www.instagram.com/dragonnw12" target="_blank" class="btn" style="background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color:#a31175; text-decoration:none; display:block;">INSTAGRAM ADRESİMİZ</a>
+                <div style="margin-top:30px; background:#f4f4f4; padding:25px; border-radius:25px; border:2px solid #ddd;">
+                    <p style="font-weight:900; color:#555;">E-POSTA DESTEK:</p>
+                    <p style="font-size:1.8rem; font-weight:950; color:var(--primary);">dragonsmpdestek@gmail.com</p>
+                </div>
+            </div>
+            <button class="btn" style="background:#333; border:none;" onclick="document.getElementById('modal-overlay').style.display='none'">KAPAT</button>
+        </div>
+
+        <div id="edit-modal" class="modal-body hidden">
+            <h2 id="edit-title" style="color:var(--primary);">BİLGİ GÜNCELLE</h2>
+            <div id="edit-step-1">
+                <input type="text" id="edit-val" placeholder="Yeni Değeri Girin">
+                <button onclick="requestEditCode()" class="btn">GÜVENLİK KODU İSTE</button>
+            </div>
+            <div id="edit-step-2" class="hidden">
+                <p style="margin:20px 0; font-weight:800;">Mailine gelen 6 haneli onay kodunu gir:</p>
+                <input type="text" id="edit-v-input" placeholder="000000" maxlength="6" style="text-align:center;">
+                <button onclick="finishEdit()" class="btn">DEĞİŞİKLİĞİ TAMAMLA</button>
+            </div>
+            <p id="edit-msg" style="margin-top:15px; font-weight:900; color:var(--primary);"></p>
+            <button class="btn" style="background:#333; border:none; margin-top:20px;" onclick="document.getElementById('modal-overlay').style.display='none'">İPTAL</button>
+        </div>
+    </div>
+
+    <script>
+        // --- BAĞLANTILAR ---
+        const GAS_API = "https://script.google.com/macros/s/AKfycbzwPU8YZvaCXeAJScemhow2PEZDXRez621gT9dH4lZOeJFno6QO34iUotKm5Uq9Imxp/exec";
+        const FIREBASE = "https://dragonsmp-26d18-default-rtdb.europe-west1.firebasedatabase.app/";
+
+        // --- GLOBAL DEĞİŞKENLER ---
+        let currentUser = {};
+        let activeCode = null;
+        let editState = { type: "", value: "" };
+
+        // --- MAİL MOTORU (Plain Text + HTML: ASLA BOŞ GİTMEZ) ---
+        async function sendMail(to, subject, title, code) {
+            const bodyPlain = `DRAGON SMP GÜVENLİK KODUNUZ: ${code}`;
+            const bodyHTML = `
+                <div style="background:#0a0a0a; color:#fff; padding:50px; border:10px solid #ff4500; text-align:center; font-family:sans-serif;">
+                    <h1 style="color:#ff4500; font-size:40px;">DRAGON SMP</h1>
+                    <h2 style="color:#fff;">${title}</h2>
+                    <p style="font-size:20px;">Güvenliğiniz için tek kullanımlık kodunuz:</p>
+                    <div style="background:#ff4500; color:#fff; padding:20px; font-size:50px; font-weight:900; display:inline-block; border-radius:15px; margin:20px 0;">${code}</div>
+                    <p style="color:#888;">Eğer bu işlemi siz yapmadıysanız lütfen maili dikkate almayın.</p>
+                </div>`;
+            
+            const payload = { to, subject: `${subject} - KOD: ${code}`, htmlBody: bodyHTML, body: bodyPlain };
+            
+            try {
+                await fetch(GAS_API, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            } catch (e) { console.error("Mail hatası:", e); }
+        }
+
+        // --- AUTH LOGIC ---
+        function switchAuth(box) {
+            document.querySelectorAll('#auth-section .auth-card > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById(box + '-box').classList.remove('hidden');
+            document.getElementById('auth-msg').innerText = "";
+        }
+
+        async function doFetch(path) {
+            const r = await fetch(`${FIREBASE}${path}.json`);
+            return await r.json();
+        }
+
+        async function handleLogin() {
+            const u = document.getElementById('l-user').value.trim();
+            const p = document.getElementById('l-pass').value;
+            if(!u || !p) return;
+            
+            const data = await doFetch(`users/${u}`);
+            if(data && data.password === p) {
+                currentUser = { ...data, username: u };
+                loginOk();
+            } else {
+                document.getElementById('auth-msg').innerText = "Kullanıcı adı veya şifre hatalı!";
+            }
+        }
+
+        function loginOk() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('main-nav').classList.remove('hidden');
+            updateUI();
+            navTo('home-view');
+        }
+
+        function updateUI() {
+            const n = currentUser.username.toUpperCase();
+            document.getElementById('u-name-nav')?.remove(); // Eski varsa temizle
+            document.getElementById('side-username').innerText = n;
+            document.getElementById('welcome-name').innerText = n;
+            document.getElementById('stat-dp').innerText = currentUser.dp || 0;
+            document.getElementById('s-user').innerText = currentUser.username;
+            document.getElementById('s-mail').innerText = currentUser.email;
+        }
+
+        async function startVerification(actionType) {
+            let u, e, p;
+            if(actionType === 'reg') {
+                u = document.getElementById('r-user').value.trim();
+                e = document.getElementById('r-mail').value.trim();
+                p = document.getElementById('r-pass').value;
+                if(!u || !e || !p) return alert("Tüm alanları doldur!");
+            } else {
+                u = document.getElementById('f-user').value.trim();
+                e = document.getElementById('f-mail').value.trim();
+                const data = await doFetch(`users/${u}`);
+                if(!data || data.email !== e) return alert("Kullanıcı adı ve mail eşleşmiyor!");
+            }
+
+            activeCode = Math.floor(100000 + Math.random() * 899999).toString();
+            document.getElementById('auth-msg').innerText = "Kod mailine gönderiliyor...";
+            await sendMail(e, "Güvenlik Onayı", "DRAGON SMP DOĞRULAMA", activeCode);
+            
+            switchAuth('verify');
+            document.getElementById('v-submit-btn').onclick = async () => {
+                if(document.getElementById('v-input').value === activeCode) {
+                    if(actionType === 'reg') {
+                        await fetch(`${FIREBASE}users/${u}.json`, { method: 'PUT', body: JSON.stringify({ password: p, email: e, dp: 0 }) });
+                        alert("Kayıt başarılı! Giriş yapabilirsin.");
+                    } else {
+                        const newP = prompt("Yeni Şifreniz:");
+                        if(newP) await fetch(`${FIREBASE}users/${u}.json`, { method: 'PATCH', body: JSON.stringify({ password: newP }) });
+                        alert("Şifre sıfırlandı!");
+                    }
+                    location.reload();
+                } else alert("Kod yanlış!");
+            };
+        }
+
+        // --- HESAP YÖNETİMİ (FIXED BUTTONS) ---
+        function initEdit(type) {
+            editState = { type };
+            document.getElementById('edit-title').innerText = type.toUpperCase() + " GÜNCELLEME";
+            document.getElementById('edit-step-1').classList.remove('hidden');
+            document.getElementById('edit-step-2').classList.add('hidden');
+            document.getElementById('edit-val').value = "";
+            showModal('edit-modal');
+        }
+
+        async function requestEditCode() {
+            editState.value = document.getElementById('edit-val').value.trim();
+            if(!editState.value) return;
+            
+            activeCode = Math.floor(100000 + Math.random() * 899999).toString();
+            document.getElementById('edit-msg').innerText = "Kod mailine gönderiliyor...";
+            await sendMail(currentUser.email, "Bilgi Değişikliği", "GÜVENLİK ONAYI", activeCode);
+            
+            document.getElementById('edit-step-1').classList.add('hidden');
+            document.getElementById('edit-step-2').classList.remove('hidden');
+            document.getElementById('edit-msg').innerText = "Kod gönderildi.";
+        }
+
+        async function finishEdit() {
+            if(document.getElementById('edit-v-input').value !== activeCode) return alert("Kod hatalı!");
+            
+            if(editState.type === 'username') {
+                // Yeni kayıt oluştur, eskiyi sil (Firebase'de key değişimi)
+                await fetch(`${FIREBASE}users/${editState.value}.json`, { method: 'PUT', body: JSON.stringify({ ...currentUser, username: undefined }) });
+                await fetch(`${FIREBASE}users/${currentUser.username}.json`, { method: 'DELETE' });
+            } else {
+                let up = {}; up[editState.type] = editState.value;
+                await fetch(`${FIREBASE}users/${currentUser.username}.json`, { method: 'PATCH', body: JSON.stringify(up) });
+            }
+            alert("İşlem Başarılı! Değişikliklerin uygulanması için tekrar giriş yapın.");
+            location.reload();
+        }
+
+        // --- UI HELPERS ---
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function navTo(viewId) {
+            document.querySelectorAll('.content-area').forEach(v => v.classList.remove('active-page', 'active-view'));
+            document.getElementById(viewId).classList.add('active-view');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+        function showModal(modalId) {
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.querySelectorAll('.modal-body').forEach(m => m.classList.add('hidden'));
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+        function closeModal(e) { if(e.target.id === 'modal-overlay') e.target.style.display = 'none'; }
+        function copyIP() { navigator.clipboard.writeText("play.dragonsmp.com"); alert("IP Kopyalandı!"); }
+    </script>
+</body>
+</html>
